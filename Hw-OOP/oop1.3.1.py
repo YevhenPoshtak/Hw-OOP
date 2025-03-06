@@ -49,7 +49,6 @@ class Trapeze(Shape):
         self.b = b
         self.c = c
         self.d = d
-
     def is_valid(self):
         return (self.a >= 0 and self.b >= 0 and self.c > 0 and self.d > 0 and self.c ** 2 > (abs(self.a - self.b) / 2) ** 2)
     def perimeter(self):
@@ -122,30 +121,27 @@ def process_file(filename):
                 if shape:
                     shapes.append(shape)
     except FileNotFoundError:
-        print(f"Файл {filename} не знайдено")
-        return None
+        return f"Файл {filename} не знайдено\n", None
     if not shapes:
-        print(f"Фігури не знайдені у файлі {filename}")
-        return None
+        return f"Фігури не знайдені у файлі {filename}\n", None
     max_area = max(shapes, key=lambda s: s.area()).area()
     max_perimeter = max(shapes, key=lambda s: s.perimeter()).perimeter()
     for shape in shapes:
         if shape.area() == max_area and shape.perimeter() == max_perimeter:
-            return (shape.name(), shape.area(), shape.perimeter())
-    return None
+            return (f"Для файлу {filename}:\n" f"Фігура з найбільшою площею та периметром: {shape.name()} з площею {shape.area():.2f} і периметром {shape.perimeter():.2f}\n"), shape
+    return f"Для файлу {filename}: Жодна фігура не має одночасно максимальну площу і периметр\n", None
 
 
 def main():
     input_files = ["input01.txt", "input02.txt", "input03.txt"]
+    output_lines = []
     for filename in input_files:
-        result = process_file(filename)
+        message, result = process_file(filename)
+        output_lines.append(message)
         if result:
-            shape_name, area, perimeter = result
-            print(f"Для файлу {filename}:")
-            print(
-                f"Фігура з найбільшою площею та периметром: {shape_name} з площею {area:.2f} і периметром {perimeter:.2f}")
-        else:
-            print(f"Для файлу {filename}: Жодна фігура не має одночасно максимальну площу і периметр")
+            print(message.strip())
+    with open("output.txt", "w", encoding="utf-8") as output_file:
+        output_file.writelines(output_lines)
 
 
 if __name__ == "__main__":
